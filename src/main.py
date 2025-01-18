@@ -1,5 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
+import click
 
 dynamodb = boto3.resource('dynamodb')
 
@@ -19,6 +20,7 @@ def fetch_all_items(table_name):
         ]
         items.extend(sorted_items)
 
+        # ページング処理
         while 'LastEvaluatedKey' in response:
             response = table.scan(
                 ExclusiveStartKey=response['LastEvaluatedKey'])
@@ -42,7 +44,7 @@ def sort_dict_by_keys(item):
 
 def compare_dynamodb_tables(table1_name, table2_name):
     """
-    2つの DynamoDB テーブルのアイテムを比較して結果を出力。
+    2つの DynamoDB テーブルを比較し、差分を出力。
     """
     table1_items = fetch_all_items(table1_name)
     table2_items = fetch_all_items(table2_name)
@@ -64,5 +66,15 @@ def compare_dynamodb_tables(table1_name, table2_name):
         print(dict(item))
 
 
-# # 実行例
-# compare_dynamodb_tables("table1_name", "table2_name")
+@click.command()
+@click.argument("table1_name")
+@click.argument("table2_name")
+def cli(table1_name, table2_name):
+    """
+    CLI エントリポイント: DynamoDB テーブルを比較する
+    """
+    compare_dynamodb_tables(table1_name, table2_name)
+
+
+if __name__ == "__main__":
+    cli()
