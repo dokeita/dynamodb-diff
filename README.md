@@ -8,7 +8,7 @@ DynamoDB-Diff is a tool to detect differences between two DynamoDB tables. It sc
 
 ## Development
 ### Prerequisites
-- Python 3.8 or later
+- Python 3.11 or later
 - `pipenv` for dependency management
 - DynamoDB Local (optional, for local testing)
 
